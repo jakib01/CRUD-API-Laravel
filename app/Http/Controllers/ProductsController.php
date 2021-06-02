@@ -7,39 +7,70 @@ use Illuminate\Http\Request;
 
 class ProductsController extends Controller
 {
-    function show()
+
+    public function store(Request $request){
+
+        $insert_item = new Products();
+        $insert_item->title = $request->input('title');
+        $insert_item->description = $request->input('description');
+        $insert_item->price = $request->input('price');
+
+        if ($request->hasFile('image')){
+            $file =  $request->file('image');
+            $filename = "http://127.0.0.1:8000/img/" . time() . '.' .$file->extension();
+            $file->move('img', $filename);
+            $insert_item->image =$filename;
+        }else{
+            $insert_item ->image = null;
+        }
+
+        $insert_item->save();
+
+        if (Response()->json($insert_item)) {
+            return ['status' => "Products has been inserted",'data'=>'200'];
+        }
+
+    }
+
+
+    public function show()
     {
         $show_item = Products::all();
-//        $show_item= json_encode(array('item' => $show_item));
-//        $array = json_decode($show_item, true);
-//        usort($array['item'], function($a, $b) {
-//            return $a['id'] < $b['id'];
-//        });
-//        return response()->json($array);
         return response()->json($show_item);
     }
 
 
-    function update(Request $request, $id)
+    public function update(Request $request, $id)
     {
-        $data = Products::find($id);
-        $data->title = $request->input('title');
+        $this->validate($request, [
+            'image' => 'required|image|mimes:jpeg,png,gif,svg|max:3072',
+        ]);
 
-        $data->save();
+        $file = $request->file('image');
+        $filename = "http://127.0.0.1:8000/img/" . time() . '.' . $file->extension();
+        $file->move('img', $filename);
 
-        if (Response()->json($data)) {
-            return ['status' => "item has been updated",'data'=>'200'];
+        $update_data = Products::find($id);
+        $update_data->title = $request->input('title');
+        $update_data->description = $request->input('description');
+        $update_data->price = $request->input('price');
+        $update_data->image = $filename;
+
+        $update_data->save();
+
+        if (Response()->json($update_data)) {
+            return ['status' => "Product has been updated",'data'=>'200'];
         }
 //        return Response()->json($data);
     }
 
-    function delete(Request $request, $id)
+    public function delete($id)
     {
         $data = Products::find($id);
         $data->delete();
 
         if (Response()->json($data)) {
-            return ['status' => "item has been deleted",'data'=>'200'];
+            return ['status' => "Product has been deleted",'data'=>'200'];
         }
         //        return Response()->json($delete_item);
     }
