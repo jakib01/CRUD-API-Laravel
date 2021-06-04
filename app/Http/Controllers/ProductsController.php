@@ -39,6 +39,18 @@ class ProductsController extends Controller
         return response()->json($show_item);
     }
 
+    function edit($id)
+    {
+        $show_item_byid = Products::find($id);
+        return Response()->json($show_item_byid);
+    }
+
+    function show_product($id)
+    {
+        $show_item_byid = Products::find($id);
+        return Response()->json($show_item_byid);
+    }
+
 
     public function update(Request $request, $id)
     {
@@ -61,7 +73,6 @@ class ProductsController extends Controller
         if (Response()->json($update_data)) {
             return ['status' => "Product has been updated",'data'=>'200'];
         }
-//        return Response()->json($data);
     }
 
     public function delete($id)
@@ -72,7 +83,6 @@ class ProductsController extends Controller
         if (Response()->json($data)) {
             return ['status' => "Product has been deleted",'data'=>'200'];
         }
-        //        return Response()->json($delete_item);
     }
 
 }

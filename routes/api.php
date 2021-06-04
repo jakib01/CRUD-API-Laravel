@@ -23,6 +23,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['prefix'=> 'admin'],function (){
     Route::post('/store',[ProductsController::class,'store']);
     Route::get('/show',[ProductsController::class,'show']);
-    Route::post('/update/{id}',[ProductsController::class,'update']);
+    Route::get('/edit/{id}',[ProductsController::class,'edit']);
+    Route::get('/show/{id}',[ProductsController::class,'show_product']);
+    Route::patch('/update/{id}',[ProductsController::class,'update']);
     Route::delete('/delete/{id}',[ProductsController::class,'delete']);
 });
